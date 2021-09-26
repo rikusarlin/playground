@@ -45,8 +45,8 @@ class TextAreaOnBlur extends Component {
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         cols={ROW_LENGTH}
-        rows="8"
         spellCheck="false"
+        rows={this.state.textAreaValue.split(NEWLINE).length}
       />
   )};
 }

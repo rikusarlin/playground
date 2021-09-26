@@ -4,7 +4,7 @@ import {wordWrapText} from './utils'
 import './TextAreaForm.css';
 
 class TextAreaOnChange extends Component {
-    constructor(props) {
+  constructor(props) {
       super(props);
       this.state = {
         textAreaValue: wordWrapText(textToEdit),
@@ -33,7 +33,7 @@ class TextAreaOnChange extends Component {
           value={this.state.textAreaValue}
           onChange={this.handleChange}
           cols={ROW_LENGTH}
-          rows="8"
+          rows={this.state.textAreaValue.split(NEWLINE).length}
           spellCheck="false"
         />
     )};

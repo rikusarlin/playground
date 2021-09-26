@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import {ROW_LENGTH, textToEdit} from './constants';
-import TextAreaOnBlur from './TextAreaOnBlur';
+import {ROW_LENGTH, NEWLINE, textToEdit} from './constants';
 import TextAreaOnChange from './TextAreaOnChange';
+import TextAreaOnBlur from './TextAreaOnBlur';
 import './TextAreaForm.css';
 
 const rulerText =
   "0_________10________20________30________40________50________60__\n"+
   "0123456789012345678901234567890123456789012345678901234567890123\n";
+
 
 class TextAreaForm extends Component {
   constructor(props) {
@@ -54,7 +55,7 @@ class TextAreaForm extends Component {
           value={this.state.textAreaValue}
           onChange={this.handleChange}
           cols={ROW_LENGTH}
-          rows="8"
+          rows={this.state.textAreaValue.split(NEWLINE).length}
           spellCheck="false"
         />
         <p/>
