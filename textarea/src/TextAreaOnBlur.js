@@ -7,8 +7,10 @@ class TextAreaOnBlur extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      textAreaValue: wordWrapText(textToEdit),
+      textAreaValue: "",
     };
+    var {processedInput} = wordWrapText(textToEdit, 0);
+    this.state.textAreaValue = processedInput;
     this.handleBlur = this.handleBlur.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
@@ -27,13 +29,17 @@ class TextAreaOnBlur extends Component {
     const inputData = event.target.value;
     const cursorAt = event.target.selectionStart;
     const newlinesInPreviousText = this.state.textAreaValue.split(NEWLINE).length;
-    const processedInput = wordWrapText(inputData);
-    const newlinesInProcessedInput = processedInput.split(NEWLINE).length;
+    var {processedInput, addedNewlineInBeginningOrEnd} = wordWrapText(inputData, cursorAt);
+      const newlinesInProcessedInput = processedInput.split(NEWLINE).length;
+      var newCursorAt = cursorAt + newlinesInProcessedInput - newlinesInPreviousText;
+      if(addedNewlineInBeginningOrEnd && processedInput.charAt(cursorAt-1)===NEWLINE){
+        newCursorAt--;
+      } 
+      newCursorAt = Math.max(0, newCursorAt);
     this.setState(
       {textAreaValue: processedInput},
-       () => {
-         event.target.selectionStart = event.target.selectionEnd = 
-          cursorAt + newlinesInProcessedInput - newlinesInPreviousText;;
+      () => {
+        event.target.selectionStart = event.target.selectionEnd = newCursorAt;
       });
   }
 
@@ -48,7 +54,7 @@ class TextAreaOnBlur extends Component {
         spellCheck="false"
         rows={this.state.textAreaValue.split(NEWLINE).length}
       />
-  )};
+    )};
 }
 
 export default TextAreaOnBlur;

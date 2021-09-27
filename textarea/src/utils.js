@@ -1,22 +1,48 @@
 import {MAX_NEWLINES, ROW_LENGTH, NEWLINE, PARAGRAPH_MARKER} from './constants'
-// eslint-disable-next-line no-control-regex
-const wordSeparatorRegexp = new RegExp('[ \n]');
 
-export function wordWrapText(inputData){
+export function wordWrapText(inputData, cursorAt){
   var processedInput = "";
+  var addedNewlineInBeginningOrEnd = false;
   if(inputData.length <= ROW_LENGTH){
     processedInput = inputData;
   } else {
-    // Replace newlines with paragraph markers
-    var inputWithParagraphMarkers = inputData;
-    for(var newlines=MAX_NEWLINES; newlines>1; newlines--){
+    var inputData2 = inputData;
+    // If the text starts with newline(s), replace with paragraph marker(s)
+    for(var newlines=MAX_NEWLINES; newlines>0; newlines--){
+      const paragraphSeparator = NEWLINE.repeat(newlines);
+      const paragraphMarker = " "+PARAGRAPH_MARKER.repeat(newlines)+" ";
+      if(inputData.substring(0,newlines) === paragraphSeparator){
+        //console.log("First "+ newlines + " lines were found to be newlines");
+        inputData2 = paragraphMarker+" " + inputData.substring(newlines, inputData.length);
+        addedNewlineInBeginningOrEnd = true;
+        break;
+      }
+    }
+
+    var inputData3 = inputData2;
+    // If the text ends with newline(s), replace with paragraph marker(s)
+    for(newlines=MAX_NEWLINES; newlines>0; newlines--){
+      const paragraphSeparator = NEWLINE.repeat(newlines);
+      const strToCompare = inputData2.slice(-newlines);
+      const paragraphMarker = " "+PARAGRAPH_MARKER.repeat(newlines)+" ";
+      if( strToCompare === paragraphSeparator){
+        //console.log("Last "+ newlines + " lines were found to be newlines");
+        inputData3 =  inputData2.substring(0, (inputData2.length-newlines)) + " "+paragraphMarker;
+        addedNewlineInBeginningOrEnd = true;
+        break;
+      }
+    }
+
+    // Replace repeated occurences of newlines with paragraph markers
+    var inputWithParagraphMarkers = inputData3;
+    for(newlines=MAX_NEWLINES; newlines>1; newlines--){
       const paragraphSeparator = NEWLINE.repeat(newlines);
       const paragraphMarker = " "+PARAGRAPH_MARKER.repeat(newlines)+" ";
       inputWithParagraphMarkers = inputWithParagraphMarkers.split(paragraphSeparator).join(paragraphMarker);
     }
 
-    // Tokenize into words
-    const inputWords1 = inputWithParagraphMarkers.split(wordSeparatorRegexp);
+    // Tokenize into words by any whitespace
+    const inputWords1 = inputWithParagraphMarkers.split(/\s+/);
 
     // Get rid of empty words
     const inputWords = inputWords1.filter(s => s);
@@ -45,14 +71,17 @@ export function wordWrapText(inputData){
             }
           }
         } else {
-          //The word does not fit into row, move to next line
+          // The word does not fit into row, move to next line
           processedInput = processedInput + NEWLINE + inputWords[i] + " ";
           charsInRow = inputWords[i].length + 1;
         }
       }
     }
   }
-  // Without this cannot append to end
-  processedInput = processedInput + " ";
-  return processedInput;
+  // Add space as last character - except if we added a newline to end
+  if(!addedNewlineInBeginningOrEnd){
+    processedInput = processedInput + " ";
+  }
+  const returnValue = {processedInput, addedNewlineInBeginningOrEnd};
+  return returnValue;
 }
