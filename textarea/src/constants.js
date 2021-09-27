@@ -1,6 +1,5 @@
 export const ROW_LENGTH = 63;
 export const NEWLINE = "\n";
-export const NEWLINE_CHAR = '\n';
 export const MAX_NEWLINES = 10;
 export const PARAGRAPH_MARKER = "<p>";
 

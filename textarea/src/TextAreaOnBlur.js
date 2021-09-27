@@ -29,13 +29,16 @@ class TextAreaOnBlur extends Component {
     const inputData = event.target.value;
     const cursorAt = event.target.selectionStart;
     const newlinesInPreviousText = this.state.textAreaValue.split(NEWLINE).length;
-    var {processedInput, addedNewlineInBeginningOrEnd} = wordWrapText(inputData, cursorAt);
-      const newlinesInProcessedInput = processedInput.split(NEWLINE).length;
-      var newCursorAt = cursorAt + newlinesInProcessedInput - newlinesInPreviousText;
-      if(addedNewlineInBeginningOrEnd && processedInput.charAt(cursorAt-1)===NEWLINE){
-        newCursorAt--;
-      } 
-      newCursorAt = Math.max(0, newCursorAt);
+    var {processedInput, focusWordWarped, addedNewlineInBeginningOrEnd} = wordWrapText(inputData, cursorAt);
+    const newlinesInProcessedInput = processedInput.split(NEWLINE).length;
+    var newCursorAt = cursorAt + newlinesInProcessedInput - newlinesInPreviousText;
+    if(addedNewlineInBeginningOrEnd && processedInput.charAt(cursorAt-1)===NEWLINE){
+      newCursorAt--;
+    }
+    if(focusWordWarped){
+      newCursorAt++;
+    }
+    newCursorAt = Math.max(0, newCursorAt);
     this.setState(
       {textAreaValue: processedInput},
       () => {

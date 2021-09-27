@@ -3,6 +3,7 @@ import {MAX_NEWLINES, ROW_LENGTH, NEWLINE, PARAGRAPH_MARKER} from './constants'
 export function wordWrapText(inputData, cursorAt){
   var processedInput = "";
   var addedNewlineInBeginningOrEnd = false;
+  var focusWordWarped = false;
   if(inputData.length <= ROW_LENGTH){
     processedInput = inputData;
   } else {
@@ -71,6 +72,10 @@ export function wordWrapText(inputData, cursorAt){
             }
           }
         } else {
+          // Notify called that the word with cursor was moved; this may affect cursor setting
+          if((processedInput.length + inputWords[i].length > cursorAt) && (processedInput.length < cursorAt)){
+            focusWordWarped = true;
+          }
           // The word does not fit into row, move to next line
           processedInput = processedInput + NEWLINE + inputWords[i] + " ";
           charsInRow = inputWords[i].length + 1;
@@ -82,6 +87,6 @@ export function wordWrapText(inputData, cursorAt){
   if(!addedNewlineInBeginningOrEnd){
     processedInput = processedInput + " ";
   }
-  const returnValue = {processedInput, addedNewlineInBeginningOrEnd};
+  const returnValue = {processedInput, focusWordWarped, addedNewlineInBeginningOrEnd};
   return returnValue;
 }
