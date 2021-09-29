@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {ROW_LENGTH, NEWLINE, textToEdit} from './constants';
 import {wordWrapText} from './utils'
+import debounce from 'lodash.debounce';
 import './TextAreaForm.css';
 
 class TextAreaOnChange extends Component {
@@ -9,38 +10,39 @@ class TextAreaOnChange extends Component {
       this.state = {
         textAreaValue: "",
       };
-      var {processedInput} = wordWrapText(textToEdit, 0);
+      var processedInput = wordWrapText(textToEdit,0);
       this.state.textAreaValue = processedInput;
-      this.handleChange = this.handleChange.bind(this);
+      this.handleInputChange = this.handleInputChange.bind(this);
+      // Delay action 500 msec
+      this.onChangeDelayed = debounce(this.onChangeDelayed, 500)
     }
 
-    handleChange(event) {
+    handleInputChange = (event) => {
+      this.setState(
+        {textAreaValue: event.target.value}
+      );
+      // Execute the debounced onChange method
+      this.onChangeDelayed(event);
+    }
+  
+    onChangeDelayed = (event) => {
       const inputData = event.target.value;
       const cursorAt = event.target.selectionStart;
-      const newlinesInPreviousText = this.state.textAreaValue.split(NEWLINE).length;
-      var {processedInput, focusWordWarped, addedNewlineInBeginningOrEnd} = wordWrapText(inputData, cursorAt);
-      const newlinesInProcessedInput = processedInput.split(NEWLINE).length;
-      var newCursorAt = cursorAt + newlinesInProcessedInput - newlinesInPreviousText;
-      if(addedNewlineInBeginningOrEnd && processedInput.charAt(cursorAt-1)===NEWLINE){
-        newCursorAt--;
-      }
-      if(focusWordWarped){
-        newCursorAt++;
-      }
-      newCursorAt = Math.max(0, newCursorAt);
+      var processedInput = wordWrapText(inputData, cursorAt);
       this.setState(
         {textAreaValue: processedInput},
         () => {
-          event.target.selectionStart = event.target.selectionEnd = newCursorAt;
-        });
-      }
+          event.target.selectionStart = event.target.selectionEnd = cursorAt;
+        }
+      );
+    }
   
     render() {
       return (
         <textarea
           className="TextArea"
           value={this.state.textAreaValue}
-          onChange={this.handleChange}
+          onChange={this.handleInputChange}
           cols={ROW_LENGTH}
           rows={this.state.textAreaValue.split(NEWLINE).length}
           spellCheck="false"

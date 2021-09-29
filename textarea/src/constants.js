@@ -3,10 +3,12 @@ export const NEWLINE = "\n";
 export const MAX_NEWLINES = 10;
 export const PARAGRAPH_MARKER = "<p>";
 
-export const textToEdit2 = 
+export const textToEdit1 = 
 "Enimmäisasumismenot on määrä, joka yleisestä asumistuesta\n"+
 "annetun lain perusteella voidaan ottaa huomioon asumistukea\n"+
-"laskettaessa. Enimmäisasumismenoihin vaikuttavat ruokakunnassa\n"+
+"laskettaessa.\n"+
+"\n"+
+"Enimmäisasumismenoihin vaikuttavat ruokakunnassa\n"+
 "asuvien henkilöiden määrä ja asunnon sijaintikunta.\n"+
 "\n"+
 "Asumismenoiksi ei asumistuessa hyväksytä esimerkiksi sähkö-,\n"+
@@ -22,3 +24,8 @@ export const textToEdit =
 "\n"+
 "Excepteur sint occaecat cupidatat non proident, sunt in culpa\n"+
 "qui officia deserunt mollit anim id est laborum.";
+
+export const textToEdit3 = 
+"Enimmäisasumismenot on määrä, joka yleisestä asumistuesta\n"+
+"annetun lain perusteella voidaan ottaa huomioon asumistukea\n"+
+"laskettaessa.";

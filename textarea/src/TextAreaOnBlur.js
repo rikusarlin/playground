@@ -9,7 +9,7 @@ class TextAreaOnBlur extends Component {
     this.state = {
       textAreaValue: "",
     };
-    var {processedInput} = wordWrapText(textToEdit, 0);
+    var processedInput = wordWrapText(textToEdit, 0);
     this.state.textAreaValue = processedInput;
     this.handleBlur = this.handleBlur.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -28,22 +28,13 @@ class TextAreaOnBlur extends Component {
   handleBlur(event) {
     const inputData = event.target.value;
     const cursorAt = event.target.selectionStart;
-    const newlinesInPreviousText = this.state.textAreaValue.split(NEWLINE).length;
-    var {processedInput, focusWordWarped, addedNewlineInBeginningOrEnd} = wordWrapText(inputData, cursorAt);
-    const newlinesInProcessedInput = processedInput.split(NEWLINE).length;
-    var newCursorAt = cursorAt + newlinesInProcessedInput - newlinesInPreviousText;
-    if(addedNewlineInBeginningOrEnd && processedInput.charAt(cursorAt-1)===NEWLINE){
-      newCursorAt--;
-    }
-    if(focusWordWarped){
-      newCursorAt++;
-    }
-    newCursorAt = Math.max(0, newCursorAt);
+    var processedInput = wordWrapText(inputData, cursorAt);
     this.setState(
       {textAreaValue: processedInput},
       () => {
-        event.target.selectionStart = event.target.selectionEnd = newCursorAt;
-      });
+        event.target.selectionStart = event.target.selectionEnd = cursorAt;
+      }
+    );
   }
 
   render() {
